@@ -1,0 +1,7 @@
+headscale.kfazilov.online {
+	reverse_proxy 127.0.0.1:8080
+}
+
+clip.kfazilov.online {
+	reverse_proxy 127.0.0.1:8081
+}

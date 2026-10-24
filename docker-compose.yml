@@ -1,0 +1,21 @@
+services:
+  clipcascade:
+    image: sathvikrao/clipcascade:0.7.0  # server versioning is separate from the 3.x clients
+    container_name: clipcascade
+    restart: always
+    ports:
+      - "127.0.0.1:8081:8080"
+    volumes:
+      - ./cc_users:/database
+    environment:
+      - CC_MAX_MESSAGE_SIZE_IN_MiB=25
+      - CC_P2P_ENABLED=false
+      - CC_SIGNUP_ENABLED=false
+      - CC_ALLOWED_ORIGINS=https://clip.kfazilov.online
+      # H2 with CIPHER=AES wants "<file password> <user password>", space-separated
+      - CC_SERVER_DB_PASSWORD=${CC_SERVER_DB_PASSWORD:?set in .env}
+      # sessions live in memory: without this every restart logs out all clients
+      - SERVER_SERVLET_SESSION_PERSISTENT=true
+      - SERVER_SERVLET_SESSION_STORE_DIR=/database/sessions
+      # behind Caddy: trust X-Forwarded-Proto, or redirects point to http://
+      - SERVER_FORWARD_HEADERS_STRATEGY=native
