@@ -84,11 +84,11 @@ ClipCascade: поменять тег образа в `docker-compose.yml` (зд�
 ```sh
 cd /opt/clipcascade && sudo docker compose pull && sudo docker compose up -d
 ```
-Поменять Caddyfile: `sudo systemctl reload caddy` после замены файла.
+После этого перелогиниться на всех устройствах (см. «Почему так»). Поменять Caddyfile: `sudo systemctl reload caddy` после замены файла, ClipCascade это не задевает.
 
 ## Почему так
 
-- **`SERVER_SERVLET_SESSION_PERSISTENT`**: ClipCascade держит сессии в памяти, и любой рестарт контейнера разлогинивал все клиенты. Клиент на Linux сам заново не входит, а бесконечно стучится со старой cookie (`Invalid redirect target .../login`). Теперь Tomcat при остановке сохраняет сессии в `cc_users/sessions/SESSIONS.ser`. Это работает только при штатной остановке (`docker compose restart/down`, перезагрузка сервера). После `kill -9` или падения войти придётся заново.
+- **Любой рестарт контейнера разлогинивает все клиенты.** ClipCascade держит сессии в памяти. Сохранить их на диск (`SERVER_SERVLET_SESSION_PERSISTENT`) не получается: объект пользователя в ClipCascade не сериализуется, и Tomcat при загрузке падает с `StreamCorruptedException`. Клиент на Linux сам заново не входит, а бесконечно стучится со старой cookie: в `~/.local/share/clipcascade/clipcascade_log.log` пишет `Invalid redirect target .../login`. После обновления образа, перезагрузки сервера или `docker compose restart` нужно перелогиниться на ноутбуке (команда в README dotfiles, раздел ClipCascade) и проверить телефон. Поэтому без нужды контейнер не перезапускать.
 - **`SERVER_FORWARD_HEADERS_STRATEGY=native`**: без этого Spring не видит `X-Forwarded-Proto` от Caddy и редиректит на `http://`.
 - **Образ `0.7.0`, а не `latest`**: у сервера своя нумерация версий, клиенты 3.x с ним совместимы. `latest` при `pull` обновил бы сервер незаметно.
 - **Порт `127.0.0.1:8081`**: снаружи ClipCascade доступен только через Caddy с TLS.
