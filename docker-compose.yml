@@ -16,3 +16,6 @@ services:
       - CC_SERVER_DB_PASSWORD=${CC_SERVER_DB_PASSWORD:?set in .env}
       # behind Caddy: trust X-Forwarded-Proto, or redirects point to http://
       - SERVER_FORWARD_HEADERS_STRATEGY=native
+      # default heap is 1/4 of the 2 GB VPS and 25 MiB messages filled it; on OOM
+      # exit so "restart: always" brings it back instead of a GC-thrashing zombie
+      - JAVA_TOOL_OPTIONS=-Xmx768m -XX:+ExitOnOutOfMemoryError
