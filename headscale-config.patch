@@ -1,0 +1,54 @@
+--- /etc/headscale/config.yaml.bak-pre-caddy	2026-10-21 08:59:38.301000000 +0000
++++ /etc/headscale/config.yaml	2026-10-28 21:37:13.722000000 +0000
+@@ -16,7 +16,7 @@
+ #
+ # For production:
+ # listen_addr: 0.0.0.0:8080
+-listen_addr: 0.0.0.0:443
++listen_addr: 127.0.0.1:8080
+ 
+ # Address to listen to /metrics and /debug, you may want
+ # to keep this endpoint private to your internal network
+@@ -92,7 +92,7 @@
+   server:
+     # If enabled, runs the embedded DERP server and merges it into the rest of the DERP config
+     # The Headscale server_url defined above MUST be using https, DERP requires TLS to be in place
+-    enabled: false
++    enabled: true
+ 
+     # Region ID to use for the embedded DERP server.
+     # The local DERP prevails if the region ID collides with other region ID coming from
+@@ -100,8 +100,8 @@
+     region_id: 999
+ 
+     # Region code and name are displayed in the Tailscale UI to identify a DERP region
+-    region_code: "headscale"
+-    region_name: "Headscale Embedded DERP"
++    region_code: "ru"
++    region_name: "headscale-ru"
+ 
+     # Only allow clients associated with this server access
+     verify_clients: true
+@@ -124,11 +124,10 @@
+     # For better connection stability (especially when using an Exit-Node and DNS is not working),
+     # it is possible to optionally add the public IPv4 and IPv6 address to the Derp-Map using:
+     ipv4: 185.149.147.254
+-    ipv6: 2001:db8::1
++      # ipv6: 2001:db8::1
+ 
+   # List of externally available DERP maps encoded in JSON
+-  urls:
+-    - https://controlplane.tailscale.com/derpmap/default
++  urls: []
+ 
+   # Locally available DERP map files encoded in YAML
+   #
+@@ -259,7 +258,7 @@
+ acme_email: "k.fazilov@icloud.com"
+ 
+ # Domain name to request a TLS certificate for:
+-tls_letsencrypt_hostname: "headscale.kfazilov.online"
++tls_letsencrypt_hostname: ""
+ 
+ # Path to store certificates and metadata needed by
+ # letsencrypt
